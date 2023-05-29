@@ -2,37 +2,60 @@ import cv2
 import numpy as np
 import face_recognition
 import os
+from datetime import datetime
 
 path = 'ImageAttendace'
 images = []
 classNames = []
 myList = os.listdir(path)
 print(myList)
-for cl in myList:
-    curImg = cv2.imread(f'{path}/{cl}')
+for cls in myList:
+    curImg = cv2.imread(f'{path}/{cls}')
     images.append(curImg)
+    print("print image len")
     print(len(images))
-    classNames.append(os.path.splitext(cl)[0])
+    classNames.append(os.path.splitext(cls)[0])
 
 print(classNames)
 
 
 def findEncoding(images):
     encodeList = []
+
     for img in images:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        print("Take Image in encode")
         encode = face_recognition.face_encodings(img)[0]
         encodeList.append(encode)
-        print(len(encodeList))
+       # print(len(encodeList))
         print(classNames[img])
-        print(encodeList)
-        return encodeList
+       # print(encodeList)
+    return encodeList
+
+    encodeListKnow =  findEncoding(images)
+    print(len(encodeListKnow))
+    print(encodeListKnow)
+
+def markAttendace(name):
+    with open('Attendance.csv','r+') as f:
+        myDataList= f.readline();
+        nameList=[]
+        for line in myDataList:
+            entry= line.split(' ,')
+            nameList.append(entry[0])
+            if name not in nameList:
+                now =datetime.now()
+                dtString= now.strftime('%H:%M,%S')
+                f.writelines(f'\n{name},{dtString}')
 
 
-#encodeListKnow = findEncoding(images)
+
+
+#markAttendace('prince')
+
+
 print('Encoding Done ')
-#print(len(encodeListKnow))
-#print(encodeListKnow)
+
 
 cap = cv2.VideoCapture(0)
 while True:
@@ -46,7 +69,7 @@ while True:
     for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
         matches = face_recognition.compare_faces(encodeListKnow, encodeFace)
         faceDis = face_recognition.face_distance(encodeListKnow, encodeFace)
-        #print(faceDis)
+        print(faceDis)
 
         matchIndex = np.argmin(faceDis)
         # print(matchIndex)
@@ -60,6 +83,16 @@ while True:
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
             cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            markAttendace('Prince')
 
     cv2.imshow('WebCam', img)
     cv2.waitKey(1)
+
+
+
+
+
+
+
+
+

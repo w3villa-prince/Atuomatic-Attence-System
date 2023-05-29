@@ -24,15 +24,15 @@ def findEncoding(images):
         encode = face_recognition.face_encodings(img)[0]
         encodeList.append(encode)
         print(len(encodeList))
-        print(classNames[img])
+        # print(classNames[img])
         print(encodeList)
         return encodeList
 
 
-#encodeListKnow = findEncoding(images)
+encodeListKnow = findEncoding(images)
 print('Encoding Done ')
-#print(len(encodeListKnow))
-#print(encodeListKnow)
+print(len(encodeListKnow))
+print(encodeListKnow)
 
 cap = cv2.VideoCapture(0)
 while True:
@@ -46,7 +46,7 @@ while True:
     for encodeFace, faceLoc in zip(encodeCurFrame, faceCurFrame):
         matches = face_recognition.compare_faces(encodeListKnow, encodeFace)
         faceDis = face_recognition.face_distance(encodeListKnow, encodeFace)
-        #print(faceDis)
+        print(faceDis)
 
         matchIndex = np.argmin(faceDis)
         # print(matchIndex)
@@ -63,3 +63,11 @@ while True:
 
     cv2.imshow('WebCam', img)
     cv2.waitKey(1)
+
+
+
+
+
+
+
+
